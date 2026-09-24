@@ -4,7 +4,6 @@
 package util
 
 import (
-	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -172,8 +171,8 @@ func TestExpandFileSource(t *testing.T) {
 	err = fa.ExpandFileSource(fSys)
 	require.NoError(t, err)
 	expected := []string{
-		filepath.FromSlash("dir/fa1"),
-		filepath.FromSlash("dir/fa2"),
+		"dir/fa1",
+		"dir/fa2",
 	}
 	if !reflect.DeepEqual(fa.FileSources, expected) {
 		t.Fatalf("FileSources is not correctly expanded: %v", fa.FileSources)
@@ -196,9 +195,9 @@ func TestExpandFileSourceWithKey(t *testing.T) {
 	err = fa.ExpandFileSource(fSys)
 	require.NoError(t, err)
 	expected := []string{
-		"foo-key=" + filepath.FromSlash("dir/faaaaaaaaaabbbbbbbbbccccccccccccccccc"),
-		"bar-key=" + filepath.FromSlash("dir/foobar"),
-		filepath.FromSlash("dir/simplebar"),
+		"foo-key=dir/faaaaaaaaaabbbbbbbbbccccccccccccccccc",
+		"bar-key=dir/foobar",
+		"dir/simplebar",
 	}
 	if !reflect.DeepEqual(fa.FileSources, expected) {
 		t.Fatalf("FileSources is not correctly expanded: %v", fa.FileSources)

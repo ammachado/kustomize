@@ -5,7 +5,6 @@ package util
 
 import (
 	"fmt"
-	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -71,7 +70,7 @@ func TestGlobPatternsWithLoaderRemoteFile(t *testing.T) {
 	require.NoError(t, err, "unexpected load error")
 	require.Equal(t, 2, len(resources), "incorrect resources")
 	require.Equal(t, httpPath, resources[0], "incorrect resources")
-	require.Equal(t, filepath.FromSlash("/test.yml"), resources[1], "incorrect resources")
+	require.Equal(t, "/test.yml", resources[1], "incorrect resources")
 
 	// test load invalid file
 	invalidURL := "http://invalid"

@@ -4,7 +4,6 @@
 package create
 
 import (
-	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -185,7 +184,7 @@ func TestCreateWithDetect(t *testing.T) {
 		t.Fatalf("unexpected cmd error: %v", err)
 	}
 	m := readKustomizationFS(t, fSys)
-	expected := []string{filepath.FromSlash("/test.yaml")}
+	expected := []string{"/test.yaml"}
 	if !reflect.DeepEqual(m.Resources, expected) {
 		t.Fatalf("expected %+v but got %+v", expected, m.Resources)
 	}
@@ -200,7 +199,7 @@ func TestCreateWithDetectRecursive(t *testing.T) {
 		t.Fatalf("unexpected cmd error: %v", err)
 	}
 	m := readKustomizationFS(t, fSys)
-	expected := []string{filepath.FromSlash("/overlay"), filepath.FromSlash("/sub/test.yaml"), filepath.FromSlash("/test.yaml")}
+	expected := []string{"/overlay", "/sub/test.yaml", "/test.yaml"}
 	if !reflect.DeepEqual(m.Resources, expected) {
 		t.Fatalf("expected %+v but got %+v", expected, m.Resources)
 	}
