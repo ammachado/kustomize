@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -115,7 +116,18 @@ func TestLocFilePath(t *testing.T) {
 	}
 }
 
+// skipOnWindows skips tests that create the file names localize generates
+// on disk, where Windows rejects some of them: ':' in an IPv6 host, '*',
+// and a directory named "..." (Windows drops trailing dots).
+func skipOnWindows(t *testing.T) {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		t.Skip("localize generates file names that Windows cannot hold")
+	}
+}
+
 func TestLocFilePathColon(t *testing.T) {
+	skipOnWindows(t)
 	req := require.New(t)
 
 	// The colon is special because it was once used as the unix file separator.
@@ -139,6 +151,7 @@ func TestLocFilePathColon(t *testing.T) {
 }
 
 func TestLocFilePath_SpecialChar(t *testing.T) {
+	skipOnWindows(t)
 	req := require.New(t)
 
 	// The wild card character is one of the legal uri characters with more meaning
@@ -176,6 +189,9 @@ func TestLocFilePath_SpecialFiles(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			if name == "hidden_files" {
+				skipOnWindows(t)
+			}
 			req := require.New(t)
 
 			expectedPath := simpleJoin(t, LocalizeDir, "host", tFSys.pathDir, tFSys.pathFile)
@@ -260,6 +276,9 @@ func TestLocRootPath_URLComponents(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			if name == "IPv6" {
+				skipOnWindows(t)
+			}
 			u := fmt.Sprintf(test.urlf, "path/to/root")
 			path := simpleJoin(t, LocalizeDir, test.path, "path", "to", "root")
 
