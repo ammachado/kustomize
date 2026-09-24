@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"testing"
 
@@ -217,7 +218,7 @@ func link(t *testing.T, testDir filesys.ConfirmedDir, links map[string]string) {
 func simplePathAndFiles(t *testing.T) (locPath string, files map[string]string) {
 	t.Helper()
 
-	locPath = filepath.Join(LocalizeDir, "github.com",
+	locPath = path.Join(LocalizeDir, "github.com",
 		"kubernetes-sigs", "kustomize", "kustomize", "v4.5.7",
 		"api", "krusty", "testdata", "localize", "simple")
 	files = map[string]string{
@@ -231,7 +232,7 @@ func simplePathAndFiles(t *testing.T) (locPath string, files map[string]string) 
 func remotePathAndFiles(t *testing.T) (locPath string, files map[string]string) {
 	t.Helper()
 
-	locPath = filepath.Join(LocalizeDir, "github.com",
+	locPath = path.Join(LocalizeDir, "github.com",
 		"kubernetes-sigs", "kustomize", "master",
 		"api", "krusty", "testdata", "localize", "remote")
 	simplePath, simpleFiles := simplePathAndFiles(t)
@@ -256,7 +257,7 @@ func TestWorkingDir(t *testing.T) {
 	files := map[string]string{
 		filepath.Join("target", "kustomization.yaml"): fmt.Sprintf(`resources:
 - %s
-`, filepath.Join("..", "base")),
+`, path.Join("..", "base")),
 		filepath.Join("base", "kustomization.yaml"): `resources:
 - deployment.yaml
 `,
@@ -311,7 +312,7 @@ func TestLoaderSymlinks(t *testing.T) {
 		"kustomization.yaml": fmt.Sprintf(`resources:
 - %s
 - base
-`, filepath.Join("nested", "file")),
+`, path.Join("nested", "file")),
 		filepath.Join("base", "kustomization.yaml"): `namePrefix: test-
 `,
 		filepath.Join("nested", "file"): simpleDeployment,
@@ -404,7 +405,7 @@ openapi:
 	require.NoError(t, err)
 	require.Equal(t, newDir, dst)
 
-	localizedPath := filepath.Join(LocalizeDir, "raw.githubusercontent.com",
+	localizedPath := path.Join(LocalizeDir, "raw.githubusercontent.com",
 		"kubernetes-sigs", "kustomize", "kustomize", "v4.5.7", "api", "krusty",
 		"testdata", "customschema.json")
 	SetupDir(t, fsExpected, dst, map[string]string{
@@ -529,7 +530,7 @@ func TestHelmNestedHome(t *testing.T) {
 	files := map[string]string{
 		"kustomization.yaml": fmt.Sprintf(`helmGlobals:
   chartHome: %s
-`, filepath.Join("nested", "dirs", "home")),
+`, path.Join("nested", "dirs", "home")),
 		filepath.Join("nested", "dirs", "home", "name", "values.yaml"): `
 minecraftServer:
   difficulty: peaceful
@@ -586,7 +587,7 @@ helmGlobals:
   valuesFile: myValues.yaml
 helmGlobals:
   chartHome: %s
-`, filepath.Join("..", "home")),
+`, path.Join("..", "home")),
 		filepath.Join("target", "myValues.yaml"):     valuesFile,
 		filepath.Join("home", "name", "values.yaml"): valuesFile,
 	})
