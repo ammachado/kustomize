@@ -122,7 +122,7 @@ func TestLocFilePath(t *testing.T) {
 func skipOnWindows(t *testing.T) {
 	t.Helper()
 	if runtime.GOOS == "windows" {
-		t.Skip("localize generates file names that Windows cannot hold")
+		t.Skip("localize generates file names that Windows cannot hold, see #6293")
 	}
 }
 
