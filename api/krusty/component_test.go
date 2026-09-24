@@ -553,8 +553,10 @@ components:
 - ../comp
 `),
 			},
-			runPath:       "filesincomponents",
-			expectedError: fmt.Sprintf("%s: '%s'", loader.ErrRtNotDir.Error(), filepath.FromSlash("/filesincomponents/stub.yaml")),
+			runPath: "filesincomponents",
+			// The message is quoted with %q, which escapes backslashes.
+			expectedError: fmt.Sprintf("%s: '%s'", loader.ErrRtNotDir.Error(),
+				strings.ReplaceAll(filepath.FromSlash("/filesincomponents/stub.yaml"), `\`, `\\`)),
 		},
 		"invalid-component-api-version": {
 			input: []FileGen{writeTestBase, writeOverlayProd,
