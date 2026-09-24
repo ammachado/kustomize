@@ -512,7 +512,7 @@ type: Opaque
 func skipIfWindows(t *testing.T) {
 	t.Helper()
 	if runtime.GOOS == "windows" {
-		t.Skip("skipping because the exec function is a shell script")
+		t.Skip("skipping because the test runs a shell script")
 	}
 }
 
