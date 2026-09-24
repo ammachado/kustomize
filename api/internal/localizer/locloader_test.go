@@ -182,9 +182,9 @@ func TestNewLocLoaderCwdNotRoot(t *testing.T) {
 			req.NoError(err)
 			checkLoader(req, ldr, "a/b/c/d/e")
 
-			req.Equal("a/b/c/d/e", args.Target.String())
-			req.Equal("a/b/c", args.Scope.String())
-			req.Equal(test.wd+"/"+test.newDir, args.NewDir.String())
+			req.Equal(filepath.FromSlash("a/b/c/d/e"), args.Target.String())
+			req.Equal(filepath.FromSlash("a/b/c"), args.Scope.String())
+			req.Equal(filepath.FromSlash(test.wd+"/"+test.newDir), args.NewDir.String())
 			// memory file system can only find paths rooted at current node
 			req.True(fSys.Exists(test.newDir))
 		})
