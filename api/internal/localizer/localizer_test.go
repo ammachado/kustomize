@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -102,12 +103,22 @@ func addFiles(t *testing.T, fSys filesys.FileSystem, parentDir string, files map
 	}
 }
 
+// skipAbsolutePathOnWindows skips tests of kustomization entries such as
+// "/a/b/pod2.yaml", which are absolute on Unix but, having no volume, are
+// relative to the current drive on Windows.
+func skipAbsolutePathOnWindows(t *testing.T) {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		t.Skip("a path rooted at \"/\" is not absolute on Windows")
+	}
+}
+
 func checkRun(t *testing.T, fSys filesys.FileSystem, target, scope, dst string) {
 	t.Helper()
 
 	actualDst, err := Run(target, scope, dst, fSys)
 	require.NoError(t, err)
-	require.Equal(t, dst, actualDst)
+	require.Equal(t, filepath.FromSlash(dst), actualDst)
 }
 
 func makeFileSystems(t *testing.T, target string, files map[string]string) (expected filesys.FileSystem, actual filesys.FileSystem) {
@@ -291,6 +302,7 @@ patches:
 }
 
 func TestLocalizeFileCleaned(t *testing.T) {
+	skipAbsolutePathOnWindows(t)
 	kustAndPatch := map[string]string{
 		"kustomization.yaml": `apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -1193,6 +1205,7 @@ nameSuffix: -test
 }
 
 func TestLocalizeResources(t *testing.T) {
+	skipAbsolutePathOnWindows(t)
 	kustAndResources := map[string]string{
 		"kustomization.yaml": `apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"log"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -21,14 +22,14 @@ func checkNewLoader(req *require.Assertions, ldr *Loader, args *Args, target str
 }
 
 func checkLoader(req *require.Assertions, ldr ifc.Loader, root string) {
-	req.Equal(root, ldr.Root())
+	req.Equal(filepath.FromSlash(root), ldr.Root())
 	req.Empty(ldr.Repo())
 }
 
 func checkArgs(req *require.Assertions, args *Args, target string, scope string, newDir string, fSys filesys.FileSystem) {
-	req.Equal(target, args.Target.String())
-	req.Equal(scope, args.Scope.String())
-	req.Equal(newDir, args.NewDir.String())
+	req.Equal(filepath.FromSlash(target), args.Target.String())
+	req.Equal(filepath.FromSlash(scope), args.Scope.String())
+	req.Equal(filepath.FromSlash(newDir), args.NewDir.String())
 	req.True(fSys.Exists(newDir))
 }
 
