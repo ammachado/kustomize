@@ -322,24 +322,30 @@ func TestLocRootPath_SymlinkPath(t *testing.T) {
 }
 
 func TestCleanedRelativePath(t *testing.T) {
+	// A path rooted at "/" has no volume, so it is not absolute on Windows.
+	vol := ""
+	if runtime.GOOS == "windows" {
+		vol = "C:"
+	}
 	fSys := filesys.MakeFsInMemory()
-	require.NoError(t, fSys.MkdirAll("/root/test"))
-	require.NoError(t, fSys.WriteFile("/root/test/file.yaml", []byte("")))
-	require.NoError(t, fSys.WriteFile("/root/filetwo.yaml", []byte("")))
+	require.NoError(t, fSys.MkdirAll(vol+"/root/test"))
+	require.NoError(t, fSys.WriteFile(vol+"/root/test/file.yaml", []byte("")))
+	require.NoError(t, fSys.WriteFile(vol+"/root/filetwo.yaml", []byte("")))
+	root := filesys.ConfirmedDir(vol + "/root/")
 
 	// Absolute path is cleaned to relative path
-	cleanedPath := cleanedRelativePath(fSys, "/root/", "/root/test/file.yaml")
-	require.Equal(t, "test/file.yaml", cleanedPath)
+	cleanedPath := cleanedRelativePath(fSys, root, vol+"/root/test/file.yaml")
+	require.Equal(t, filepath.FromSlash("test/file.yaml"), cleanedPath)
 
 	// Winding absolute path is cleaned to relative path
-	cleanedPath = cleanedRelativePath(fSys, "/root/", "/root/test/../filetwo.yaml")
+	cleanedPath = cleanedRelativePath(fSys, root, vol+"/root/test/../filetwo.yaml")
 	require.Equal(t, "filetwo.yaml", cleanedPath)
 
 	// Already clean relative path stays the same
-	cleanedPath = cleanedRelativePath(fSys, "/root/", "test/file.yaml")
-	require.Equal(t, "test/file.yaml", cleanedPath)
+	cleanedPath = cleanedRelativePath(fSys, root, "test/file.yaml")
+	require.Equal(t, filepath.FromSlash("test/file.yaml"), cleanedPath)
 
 	// Winding relative path is cleaned
-	cleanedPath = cleanedRelativePath(fSys, "/root/", "test/../filetwo.yaml")
+	cleanedPath = cleanedRelativePath(fSys, root, "test/../filetwo.yaml")
 	require.Equal(t, "filetwo.yaml", cleanedPath)
 }

@@ -795,6 +795,7 @@ spec:
 }
 
 func TestAnnoOriginRemoteBuiltinGenerator(t *testing.T) {
+	disableGitAutoCRLF(t)
 	fSys := filesys.MakeFsOnDisk()
 	b := krusty.MakeKustomizer(krusty.MakeDefaultOptions())
 	tmpDir, err := filesys.NewTmpConfirmedDir()

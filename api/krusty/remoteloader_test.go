@@ -451,6 +451,16 @@ func configureGitSSHCommand(t *testing.T) {
 	})
 }
 
+// disableGitAutoCRLF keeps Git for Windows, which enables core.autocrlf by
+// default, from checking out remote files with CRLF line endings that the
+// expected output lacks.
+func disableGitAutoCRLF(t *testing.T) {
+	t.Helper()
+	t.Setenv("GIT_CONFIG_COUNT", "1")
+	t.Setenv("GIT_CONFIG_KEY_0", "core.autocrlf")
+	t.Setenv("GIT_CONFIG_VALUE_0", "false")
+}
+
 func checkYaml(t *testing.T, actual resmap.ResMap, expected string) {
 	t.Helper()
 
