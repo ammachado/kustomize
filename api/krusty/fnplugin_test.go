@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -60,6 +61,7 @@ EOF
 `
 
 func TestFnExecGeneratorInBase(t *testing.T) {
+	skipIfWindows(t)
 	fSys := filesys.MakeFsOnDisk()
 
 	th := kusttest_test.MakeHarnessWithFs(t, fSys)
@@ -144,6 +146,7 @@ spec:
 }
 
 func TestFnExecGeneratorInBaseWithOverlay(t *testing.T) {
+	skipIfWindows(t)
 	fSys := filesys.MakeFsOnDisk()
 
 	th := kusttest_test.MakeHarnessWithFs(t, fSys)
@@ -235,6 +238,7 @@ spec:
 }
 
 func TestFnExecGeneratorInOverlay(t *testing.T) {
+	skipIfWindows(t)
 	fSys := filesys.MakeFsOnDisk()
 
 	th := kusttest_test.MakeHarnessWithFs(t, fSys)
@@ -326,6 +330,7 @@ spec:
 }
 
 func TestFnExecTransformerInBase(t *testing.T) {
+	skipIfWindows(t)
 	fSys := filesys.MakeFsOnDisk()
 
 	th := kusttest_test.MakeHarnessWithFs(t, fSys)
@@ -381,6 +386,7 @@ type: Opaque
 }
 
 func TestFnExecTransformerInBaseWithOverlay(t *testing.T) {
+	skipIfWindows(t)
 	fSys := filesys.MakeFsOnDisk()
 
 	th := kusttest_test.MakeHarnessWithFs(t, fSys)
@@ -442,6 +448,7 @@ type: Opaque
 }
 
 func TestFnExecTransformerInOverlay(t *testing.T) {
+	skipIfWindows(t)
 	fSys := filesys.MakeFsOnDisk()
 
 	th := kusttest_test.MakeHarnessWithFs(t, fSys)
@@ -500,6 +507,13 @@ stringData:
 type: Opaque
 `, string(yml))
 	require.NoError(t, fSys.RemoveAll(tmpDir.String()))
+}
+
+func skipIfWindows(t *testing.T) {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		t.Skip("skipping because the exec function is a shell script")
+	}
 }
 
 func skipIfNoDocker(t *testing.T) {
