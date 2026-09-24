@@ -518,6 +518,11 @@ func skipIfWindows(t *testing.T) {
 
 func skipIfNoDocker(t *testing.T) {
 	t.Helper()
+	if os.Getenv("KUSTOMIZE_DOCKER_E2E") == "false" {
+		// e.g. GitHub's Windows runners have docker, but it
+		// runs Windows containers, not the Linux function images.
+		t.Skip("skipping because KUSTOMIZE_DOCKER_E2E is false")
+	}
 	if _, err := exec.LookPath("docker"); err != nil {
 		t.Skip("skipping because docker binary wasn't found in PATH")
 	}
