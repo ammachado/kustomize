@@ -4,6 +4,7 @@
 package create
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -178,13 +179,13 @@ resources:
 func TestCreateWithDetect(t *testing.T) {
 	fSys := filesys.MakeFsInMemory()
 	writeDetectContent(fSys)
-	opts := createFlags{path: "/", detectResources: true}
+	opts := createFlags{path: filesys.Separator, detectResources: true}
 	err := runCreate(opts, fSys, factory)
 	if err != nil {
 		t.Fatalf("unexpected cmd error: %v", err)
 	}
 	m := readKustomizationFS(t, fSys)
-	expected := []string{"/test.yaml"}
+	expected := []string{filepath.FromSlash("/test.yaml")}
 	if !reflect.DeepEqual(m.Resources, expected) {
 		t.Fatalf("expected %+v but got %+v", expected, m.Resources)
 	}
@@ -193,13 +194,13 @@ func TestCreateWithDetect(t *testing.T) {
 func TestCreateWithDetectRecursive(t *testing.T) {
 	fSys := filesys.MakeFsInMemory()
 	writeDetectContent(fSys)
-	opts := createFlags{path: "/", detectResources: true, detectRecursive: true}
+	opts := createFlags{path: filesys.Separator, detectResources: true, detectRecursive: true}
 	err := runCreate(opts, fSys, factory)
 	if err != nil {
 		t.Fatalf("unexpected cmd error: %v", err)
 	}
 	m := readKustomizationFS(t, fSys)
-	expected := []string{"/overlay", "/sub/test.yaml", "/test.yaml"}
+	expected := []string{filepath.FromSlash("/overlay"), filepath.FromSlash("/sub/test.yaml"), filepath.FromSlash("/test.yaml")}
 	if !reflect.DeepEqual(m.Resources, expected) {
 		t.Fatalf("expected %+v but got %+v", expected, m.Resources)
 	}

@@ -109,7 +109,7 @@ func TestNoVerifyFlag(t *testing.T) {
 	loctest.SetupDir(t, expected, target.Join("dst"), kustomization)
 	loctest.CheckFs(t, target.String(), expected, actual)
 
-	successMsg := fmt.Sprintf(`SUCCESS: localized "%s" to directory %s
+	successMsg := fmt.Sprintf(`SUCCESS: localized %q to directory %s
 `, target.String(), target.Join("dst"))
 	verifyMsg := "VERIFICATION"
 	require.NotContains(t, buffy.String(), verifyMsg)
@@ -204,7 +204,7 @@ func TestOutput(t *testing.T) {
 
 	verifyMsg := "VERIFICATION SUCCESS"
 	require.Contains(t, buffy.String(), verifyMsg)
-	successMsg := fmt.Sprintf(`SUCCESS: localized "%s" to directory %s
+	successMsg := fmt.Sprintf(`SUCCESS: localized %q to directory %s
 `, target.String(), target.Join("dst"))
 	require.Contains(t, buffy.String(), successMsg)
 }
